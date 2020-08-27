@@ -84,12 +84,13 @@
         console.log(backData);
         if (backData.code == 200) {
           // alert('登录成功');
+          localStorage.setItem('token',backData.token)
           $('.modal-body>p').text('登录成功');
           $('#MyModal').modal({
             keyboard: true
           });
           $('#MyModal').on('hidden.bs.modal', function (e) {
-            localStorage.setItem('token',backData.token)
+            
             window.location.href = './index.html';
           })
 
