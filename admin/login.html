@@ -89,11 +89,12 @@
             keyboard: true
           });
           $('#MyModal').on('hidden.bs.modal', function (e) {
+            localStorage.setItem('token',backData.token)
             window.location.href = './index.html';
           })
 
         } else {
-          $('.modal-body>p').text('账号密码有误');
+          $('.modal-body>p').text(backData.msg);
           $('#MyModal').modal({
             keyboard: true
           });
