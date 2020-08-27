@@ -79,8 +79,47 @@
                 type: 'get',
                 dataType: 'json',
                 success: function (backData) {
-                    console.log(backData);
+
+                    // $('.username').val(backData.data.username);
+                    // $('.nickname').val(backData.data.nikename;
+                    // $('.password').val(backData.data.password);
+                    // $('.email').val(backData.data.email);
+                    $('.user_pic').attr('src', backData.data.userPic);
+                    for (let key in backData.data) {
+                        $('.' + key).val(backData.data[key])
+                    }
+                   
                 }
+
+            })
+
+            $('#exampleInputFile').change(function () {
+                let file = this.files[0];
+                let url = URL.createObjectURL(file);
+                $('.user_pic').attr('src', url);
+            })
+
+            $('.btn-edit').click(function (e) {
+                e.preventDefault();
+                let fd = new FormData($('form')[0]);
+                console.log(fd);
+                $.ajax({
+                    url: BigNew.user_edit,
+                    type: 'post',
+                    dataType: 'json',
+                    data:fd,
+                    processData: false,
+                    contentType: false,
+                    success: function (backData) {
+                        console.log(backData);
+                        if (backData.code == 200) {
+                            alert('修改成功')
+                            window.parent.location.reload();
+                        }else{
+                            alert(backData.msg);
+                        }
+                    }
+                })
             })
         })
     </script>
