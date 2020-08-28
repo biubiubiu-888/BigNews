@@ -43,8 +43,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-center">
-                            <a href="javascript:void(0)" class="btn btn-success" id="xinzengfenlei" data-toggle="modal"
-                                data-target="#myModal">新增分类</a>
+                            <a href="javascript:void(0)" class="btn btn-success" data-toggle="modal" data-target="#myModal">新增分类</a>
                         </td>
                     </tr>
                 </tfoot>
@@ -52,4 +51,150 @@
         </div>
     </div>
 
+
+<!-- 模态框 -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="exampleModalLabel">文章类别管理</h4>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="recipient-name" class="control-label">分类名称:</label>
+              <input type="text" class="form-control" id="recipient-name">
+            </div>
+            <div class="form-group">
+              <label for="message-text" class="control-label">分类描述:</label>
+              <input class="form-control" id="message-text">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary btn-confirm">确认</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+    <script id="cat_list" type="text/html">
+        {{ each data v}}
+        <tr>
+            <td>{{ v.name }}</td>
+            <td>{{ v.slug }}</td>
+            <td class="text-center">
+                <a data-id="{{ v.id }}" href="javascript:void(0);"  class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal">编辑</a>
+                <a data-id="{{ v.id }}" href="javascript:void(0);" class="btn btn-danger btn-xs btn-delete">删除</a>
+            </td>
+        </tr>
+        {{ /each }}
+    </script>
+
+
+    <script src="./libs/http.js"></script>
+
+    <script>
+        $(function() {
+            $.ajax({
+                url:BigNew.category_list,
+                type:'get',
+                dataType:'json',
+                success:function(backData){
+                    // console.log(backData);
+                    $('table>tbody').html(template('cat_list',backData))
+                }
+            })
+
+            $('#myModal').on('show.bs.modal',function (e) {
+                console.log(e.relatedTarget);
+                //模态框事件源触发：点击弹出模态框（DOM对象）
+                if( $(e.relatedTarget).text() == '新增分类'){
+                    $('.btn-confirm').text('新增');
+                }else{
+                    $('.btn-confirm').text('编辑');
+                    $('#recipient-name').val( $(e.relatedTarget).parent().prev().prev().text());
+                    $('#message-text').val( $(e.relatedTarget).parent().prev().text());
+
+                    $('.btn-confirm').attr('data-id',$(e.relatedTarget).attr('data-id'));
+                }
+            });
+
+            $('.btn-cancel').click(function(){
+                //清空表单
+                $('.modal-body>form')[0].reset();
+            });
+
+            $('.btn-confirm').click(function () {
+                if($(this).text()=='新增'){
+                    //新增信息
+                    $.ajax({
+                        url:BigNew.category_add,
+                        type:'post',
+                        dataType:'json',
+                        data:{
+                            name:$('#recipient-name').val(),
+                            slug:$('#message-text').val()
+                        },
+                        success:function(backData){
+                            // console.log(backData);
+                            if (backData.code == 201) {
+                                alert('新增成功');
+                                window.location.reload();
+                            }else{
+                                alert(backData.msg)
+                            }
+                        }
+                    })
+                }else{
+                    //编辑信息
+                    $.ajax({
+                        url:BigNew.category_edit,
+                        type:'post',
+                        dataType:'json',
+                        data:{
+                            id:$(this).attr('data-id'),
+                            name:$('#recipient-name').val(),
+                            slug:$('#message-text').val()
+                        },
+                        success:function(backData){
+                            // console.log(backData);
+                            if (backData.code == 200 ) {
+                                alert('修改成功');
+                                window.location.reload();
+                            }else{
+                                alert(backData.msg);
+                            }
+                        }
+                    })
+                }
+            })
+
+
+            // 删除按钮事件
+            $('table>tbody').on('click','.btn-delete',function () {
+                let id = $(this).attr('data-id');
+                // console.log(id);
+                $.ajax({
+                    url:BigNew.category_delete,
+                    type:'post',
+                    dataType:'json',
+                    data:{id:id},
+                    success:function(backData){
+                        // console.log(backData);
+                        if(backData.code == 204){
+                            alert('删除成功');
+                            window.location.reload();
+                        }else{
+                            alert(backData.msg);
+                        }
+                    }
+                })
+            })
+        })
+
+    </script>
 </html>
