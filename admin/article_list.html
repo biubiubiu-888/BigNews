@@ -111,24 +111,24 @@
                 }
             })
 
-            $.ajax({
-                url:BigNew.article_query,
-                type:'get',
-                dataType:'json',
-                data:{
-                    type:'',
-                    state:'',
-                    page:1,
-                    perpage:8
-                },
-                success:function(backData){
-                    // console.log(backData);
-                    $('table>tbody').html(template('art_list',backData));
-                }
-            })
+            // $.ajax({
+            //     url:BigNew.article_query,
+            //     type:'get',
+            //     dataType:'json',
+            //     data:{
+            //         type:'',
+            //         state:'',
+            //         page:1,
+            //         perpage:8
+            //     },
+            //     success:function(backData){
+            //         // console.log(backData);
+            //         $('table>tbody').html(template('art_list',backData));
+            //     }
+            // })
 
             $('#btnSearch').click(function(e){
-                e.preventDefault;
+                e.preventDefault();
                 $.ajax({
                     url:BigNew.article_query,
                     type:'get',
@@ -137,14 +137,15 @@
                         type:$('#selCategory').val(),
                         state:$('#selStatus').val(),
                         page:1,
-                        perpage:5
+                        perpage:10
                     },
                     success:function(backData){
-                        console.log(backData);
+                        // console.log(backData);
                         $('table>tbody').html(template('art_list',backData));
                     }
                 })
             })
+            $('#btnSearch').click()
         })
     </script>
 </body>
